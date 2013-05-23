@@ -1,0 +1,29 @@
+INSTALL
+
+Para ejecutar el programa se requiere de lo siguiente:
+ o Python 2.7
+ o OpenCV
+ o Numpy 1.7
+
+Python 2.7 se descarga de la siguiente página:
+
+http://www.python.org/getit/
+
+
+OpenCV - Windows
+
+Descargar el instalador:
+
+http://opencv.willowgarage.com/wiki/InstallGuide
+
+
+OpenCV - Python
+
+En Ubuntu ejecutar el siguiente comando:
+sudo apt-get install python-opencv
+
+Numpy 1.7
+
+Descargar e instalar el siguiente paquete:
+
+http://sourceforge.net/projects/numpy/files/NumPy/
