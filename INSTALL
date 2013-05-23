@@ -20,7 +20,7 @@ http://opencv.willowgarage.com/wiki/InstallGuide
 OpenCV - Python
 
 En Ubuntu ejecutar el siguiente comando:
-sudo apt-get install python-opencv
+ 	sudo apt-get install python-opencv
 
 Numpy 1.7
 
