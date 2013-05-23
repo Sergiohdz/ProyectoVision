@@ -20,3 +20,8 @@ Una vez ejecutado el comando se mostrara la cámara web, y ya podremos utilizar 
 de flash.
 
 En caso de querer salir de la aplicación basta con presionar la tecla ESC para salir.
+
+
+Acerca de
+=========
+
