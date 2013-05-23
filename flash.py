@@ -1,10 +1,21 @@
 #/usr/bin/env python
 
+'''
+Video
+
+Sistema deteccion de flash
+
+ESC    - exit
+
+'''
+
 import numpy as np
 import cv2
 from time import clock
 from numpy import pi, sin, cos
-import common
+import Image
+import math
+
 
 class VideoSynthBase(object):
     def __init__(self, size=None, noise=0.0, bg = None, **params):
@@ -19,7 +30,6 @@ class VideoSynthBase(object):
             w, h = map(int, size.split('x'))
             self.frame_size = (w, h)
             self.bg = cv2.resize(self.bg, self.frame_size)
-
         self.noise = float(noise)
 
     def render(self, dst):
@@ -100,8 +110,133 @@ if __name__ == '__main__':
             break
         if ch == ord(' '):
             for i, img in enumerate(imgs):
-                fn = '%s/flash_%03d.bmp' % (shotdir, i, shot_idx)
+                fn = '%s/flash_%03d.bmp' % (shotdir, shot_idx)
                 cv2.imwrite(fn, img)
-                print fn, 'saved'
-            shot_idx += 1
+                #print fn, 'saved'
+
+    	#Escala		
+	    im = Image.open(fn)
+	    pix = im.load()
+	    ancho, largo =im.size
+       	    for x in range(0,ancho): #Ancho
+	    	for y in range(0,largo): #Largo
+	    	    (r,g,b) = pix[x,y]
+	            promedio=(r+g+b)/3
+	    	    pix[x,y] =(promedio,promedio,promedio)
+	    im.save('escala%03d.bmp' % shot_idx)
+	    cont = 0
+
+	    #Binarizacion
+	    im = Image.open('escala%03d.bmp' % shot_idx)
+	    pix = im.load()
+	    for x in range(0,ancho-1): #Ancho
+	    	for y in range(0,largo-1): #Largo
+	    		(r,g,b) = pix[x,y]
+	    		promedio=(r+g+b)/3
+	    		if promedio<=250:
+	    			pix[x,y] =(0,0,0)
+				cont = cont + 1
+	    		else:
+	    			pix[x,y] =(255,255,255)	    
+	    im.save('binarizada%03d.bmp' % shot_idx)
+	    if cont>1000:
+		print "Flash Detectado"
+
+	    #Mascara
+	    im = Image.open('escala%03d.jpg' % shot_idx)
+   	    pix = im.load()
+	    dirX = ([-1, 0, 1], [-2, 0, 2], [-1, 0, 1])
+	    dirY = ([1, 2, 1], [0, 0, 0], [-1, -2, -1])
+	    for x in range(0,ancho-3): #Ancho
+	    	for y in range(0,largo-3): #Largo
+			sumDirX=0
+			sumDirY=0
+
+			for i in range(0,3):
+				for j in range(0,3):	
+					sumDirX +=(pix[x+i,y+j][0]*dirX[i][j])
+					sumDirY +=(pix[x+i,y+j][0]*dirY[i][j])
+
+			potX = pow(sumDirX, 2)
+			potY = pow(sumDirY, 2)
+			res = int(math.sqrt(potX+potY))
+			if res > 255:
+				res = 255
+			if res < 0:
+				res = 0
+			pix[x,y] = (res, res, res)
+	    im.save('convolucion.jpg')
+
+		#Se guarda posicion de pixeles blancos
+ 	    cola=[]
+	    cola2=[]
+	    im = Image.open('binarizada%03d.bmp' % shot_idx)
+	    pix=im.load()
+	    for i in range(ancho):
+	        for j in range(largo):
+        	    (r,g,b)=im.getpixel((i,j))
+        	    if ((r,g,b)==(255,255,255)):
+        	        cola.append((i,j))
+        	    else:
+        	        cola2.append((i,j))
+
+		#Dilatacion e impresion de deteccion en imagen original
+	    im = Image.open(fn)
+	    pix=im.load()#Cargarimagen
+    	    x=0
+	    while x<len(cola):
+        	(i,j)=cola[x]
+        	(r,g,b)=im.getpixel((i,j))
+        
+        	try:
+        	    if(pix[i+1,j]):#Vecinos derecho
+        	        pix[i+1,j]=(0,255,0)
+        	        
+        	except:
+        	    pass
+        	try:
+        	    if(pix[i-1,j]):#Vecino izq
+        	        pix[i-1,j]=(0,255,0)
+        	        
+        	except:
+        	    pass
+        	try:
+        	    if(pix[i,j+1]):#Vecino arriba
+        	        pix[i,j+1]=(0,255,0)
+        	except:
+        	    pass
+        	try:
+        	    if(pix[i,j-1]):#Vecino abajo
+        	        pix[i,j-1]=(0,255,0)
+        	    
+        	except:
+        	    pass
+        	try:
+        	    if(pix[i+1,j+1]):#esq derecha
+        	        pix[i+1,j+1]=(0,255,0)
+        	        
+        	except:
+        	    pass
+        	try:
+        	    if(pix[i-1,j+1]):#esq izq
+        	        pix[i-1,j+1]=(0,255,0)
+        	        
+        	except:
+        	    pass
+        	try:
+        	    if(pix[i+1,j-1]):#esq der abajo
+        	        pix[i+1,j-1]=(0,255,0)
+        	except:
+        	    pass
+        	try:
+        	    if(pix[i-1,j-1]):#esq izq abajo
+        	        pix[i-1,j-1]=(0,255,0)
+        	except:
+        	    pass
+	
+        	x+=1 			
+	    im.save('deteccion%03d.bmp' % shot_idx)
+	
+	
+	    shot_idx += 1
     cv2.destroyAllWindows()
