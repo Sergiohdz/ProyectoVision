@@ -25,3 +25,7 @@ En caso de querer salir de la aplicación basta con presionar la tecla ESC para 
 Acerca de
 =========
 
+Este programa es un proyecto para la materia de Visión Computacional, impartida por la Doctora Elisa Schaeffer. 
+
+Para más información sobre el proyecto, visitar:
+http://sergio-hdz.blogspot.mx/search/label/Visi%C3%B3n%20Computacional
