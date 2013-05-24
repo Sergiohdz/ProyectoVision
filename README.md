@@ -19,6 +19,14 @@ python flash.py
 Una vez ejecutado el comando se mostrara la cámara web, y ya podremos utilizar la detección
 de flash.
 
+El programa detectará el flash presente en la cámara, una vez detectada se generaran imagenes con
+técnicas de visión computacional como lo es:
+ o Escala de grises
+ o Binarización
+ o Dilatación
+ o Diferencia
+
+
 En caso de querer salir de la aplicación basta con presionar la tecla ESC para salir.
 
 
